@@ -1,17 +1,13 @@
 "use client";
-import { motion } from "framer-motion";
 import { Button } from "./ui/button";
-import { signIn } from "next-auth/react";
-import { Dialog, DialogTrigger, DialogContent, DialogClose } from "./ui/dialog";
+import { Dialog, DialogContent, DialogClose } from "./ui/dialog";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import {
   Select,
@@ -22,36 +18,47 @@ import {
 } from "@/components/ui/select";
 
 import { UserDialogBox } from "./user-dialog-box";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
-import { Label } from "./ui/label";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-type FormData = {
-  protocol?: string;
-  url?: string;
-  tags?: string[];
+export type FormData = {
+  url: string;
+  tags: string[];
+  rating: number;
+  userEmail: string;
 };
 
 export const Navbar = ({
   username,
   avatar,
+  email,
 }: {
   username: Nullable<string>;
   avatar: Nullable<string>;
+  email: string;
 }) => {
   const [tags, setTags] = useState<string[]>([]);
-  const [protocol, setProtocol] = useState<string>();
-  const [url, setUrl] = useState<string>();
+
+  const [url, setUrl] = useState<string>("");
+  const [rating, setRating] = useState<number>(0);
   const [formData, setFormData] = useState<FormData>();
+  const [open, setOpen] = useState(false);
   useEffect(() => {
-    setFormData({ protocol, url, tags });
-  }, [tags, protocol, url]);
+    setFormData({ url: `http"//${url}`, tags, rating, userEmail: email });
+  }, [tags, url, rating, email]);
+  useEffect(() => {
+    setTimeout(() => {
+      setTags([]);
+      setUrl("");
+      setRating(0);
+    }, 100);
+  }, [open]);
 
   return (
-    <nav className="relative w-full">
+    <nav className="relative w-full border-b">
       <div className="min-h-12 flex justify-between items-center py-2 mx-4 lg:mx-12">
         <span
           className="font-bold text-2xl cursor-pointer"
@@ -82,20 +89,12 @@ export const Navbar = ({
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
-          <Dialog
-            onOpenChange={() => {
-              setTimeout(() => {
-                setTags([]);
-                setProtocol("");
-                setUrl("");
-              }, 100);
-            }}
-          >
-            <DialogTrigger asChild>
-              <Button variant={"ghost"}>
+          <Dialog open={open}>
+            {username && (
+              <Button onClick={() => setOpen(true)} variant={"ghost"}>
                 <Plus /> Add New
               </Button>
-            </DialogTrigger>
+            )}
             <DialogContent>
               <h2>Add New Website</h2>
               <form
@@ -103,28 +102,48 @@ export const Navbar = ({
                 onSubmit={(e) => {
                   e.preventDefault();
                   toast(<pre>{JSON.stringify(formData, null, 2)}</pre>);
+                  setOpen(false);
+                  fetch("/api/site/create", {
+                    method: "POST",
+                    body: JSON.stringify(formData),
+                  }).then((res) => {
+                    res.json().then((data) => {
+                      console.log(data);
+
+                      setTimeout(() => {
+                        data.success === true
+                          ? toast("Success")
+                          : toast("Error");
+                      }, 500);
+                    });
+                  });
                 }}
               >
-                <Select
-                  onValueChange={(e) => {
-                    setProtocol(e);
-                  }}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Protocol" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="http">HTTP</SelectItem>
-                    <SelectItem value="https">HTTPS</SelectItem>
-                  </SelectContent>
-                </Select>
                 <Input
+                  required
                   onChange={(e) => {
                     setUrl(e.target.value);
                   }}
                   type="text"
-                  placeholder="URL"
+                  placeholder="URL (without protocol)"
                 />
+                <Select
+                  required
+                  onValueChange={(e) => {
+                    setRating(Number(e));
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Rating" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={"1"}>1</SelectItem>
+                    <SelectItem value={"2"}>2</SelectItem>
+                    <SelectItem value={"3"}>3</SelectItem>
+                    <SelectItem value={"4"}>4</SelectItem>
+                    <SelectItem value={"5"}>5</SelectItem>
+                  </SelectContent>
+                </Select>
                 <div className="flex gap-2">
                   <Input
                     onChange={(e) => {
@@ -143,27 +162,24 @@ export const Navbar = ({
                       return <Badge key={tag + idx}>{tag}</Badge>;
                   })}
                 </div>
-                <DialogClose>
-                  <Button className="w-full" type="submit" value="Submit">
-                    Submit
-                  </Button>
-                </DialogClose>
+
+                <Button className="w-full" type="submit" value="Submit">
+                  Submit
+                </Button>
               </form>
+              <DialogClose
+                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <X size={"18"} />
+              </DialogClose>
             </DialogContent>
           </Dialog>
         </div>
-        {username ? (
-          <UserDialogBox name={username} avatar={avatar} />
-        ) : (
-          <Button onClick={() => signIn()}>Login | Register</Button>
-        )}
+        <UserDialogBox name={username} avatar={avatar} />
       </div>
-      <motion.span
-        className="absolute bg-accent w-full h-[1px]"
-        initial={{ width: "0%" }}
-        animate={{ width: "100%" }}
-        transition={{ duration: 2.5, ease: "anticipate" }}
-      />
     </nav>
   );
 };

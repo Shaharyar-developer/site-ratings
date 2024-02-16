@@ -1,6 +1,6 @@
 import { getInitials } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "./mode-toggle";
+import { Button } from "./ui/button";
 
 export const UserDialogBox = ({
   avatar,
@@ -18,22 +19,26 @@ export const UserDialogBox = ({
   name: Nullable<string>;
   avatar: Nullable<string>;
 }) => {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage src={avatar || ""} />
-          <AvatarFallback>{getInitials(name || "")}</AvatarFallback>
-        </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>{name}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => signOut()}>Sign Out</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <ModeToggle />
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+  if (name)
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar>
+            <AvatarImage src={avatar || ""} />
+            <AvatarFallback>{getInitials(name || "")}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>{name}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => signOut()}>
+            Sign Out
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <ModeToggle />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  else return <Button onClick={() => signIn()}>Login | Register</Button>;
 };

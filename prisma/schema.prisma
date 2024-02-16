@@ -10,22 +10,20 @@ datasource db {
 }
 
 model Site {
-  id      Int          @id @default(autoincrement())
-  name    String
-  url     String
+  url     String       @id
   ratings SiteRating[]
 }
 
 model User {
-  id      Int          @id @default(autoincrement())
+  email   String       @id @unique
   ratings SiteRating[]
 }
 
 model SiteRating {
-  id     Int  @id @default(autoincrement())
-  rating Int  @default(0)
-  userId Int
-  siteId Int
-  User   User @relation(fields: [userId], references: [id])
-  Site   Site @relation(fields: [siteId], references: [id])
+  id        String @id @default(uuid())
+  rating    Int    @default(0)
+  userEmail String
+  siteUrl   String
+  Site      Site   @relation(fields: [siteUrl], references: [url])
+  User      User   @relation(fields: [userEmail], references: [email])
 }
