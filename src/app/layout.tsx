@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-
+import { Toaster } from "sonner";
 import "@/styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -28,6 +28,7 @@ export default async function RootLayout({
         >
           <main>{children}</main>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
