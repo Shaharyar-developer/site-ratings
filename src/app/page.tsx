@@ -9,12 +9,13 @@ export default async function Home() {
         email: userSession?.user?.email,
       },
     });
+
     if (!dbUser)
-      await db.user.create({
-        data: {
-          email: userSession?.user?.email,
-        },
-      });
+       await db.user.create({
+         data: {
+           email: userSession?.user?.email,
+         },
+       });
   }
   const site = await db.siteRating.findMany();
   console.log(site);
