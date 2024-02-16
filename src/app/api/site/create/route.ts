@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     origin === "http://localhost:3000" ||
     origin === "https://site-ratings.vercel.app"
   ) {
-    const site = await db.site.findUnique({
+    const site = await db.site.findMany({
       where: {
         url: formData.url,
       },
