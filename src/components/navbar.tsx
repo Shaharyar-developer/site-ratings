@@ -9,13 +9,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { UserDialogBox } from "./user-dialog-box";
 import { Plus, X } from "lucide-react";
@@ -27,7 +20,6 @@ import { toast } from "sonner";
 export type FormData = {
   url: string;
   tags: string[];
-  rating: number;
   userEmail: string;
 };
 
@@ -43,17 +35,15 @@ export const Navbar = ({
   const [tags, setTags] = useState<string[]>([]);
 
   const [url, setUrl] = useState<string>("");
-  const [rating, setRating] = useState<number>(0);
   const [formData, setFormData] = useState<FormData>();
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    setFormData({ url: `http"//${url}`, tags, rating, userEmail: email });
-  }, [tags, url, rating, email]);
+    setFormData({ url: `http"//${url}`, tags, userEmail: email });
+  }, [tags, url, email]);
   useEffect(() => {
     setTimeout(() => {
       setTags([]);
       setUrl("");
-      setRating(0);
     }, 100);
   }, [open]);
 
@@ -127,23 +117,7 @@ export const Navbar = ({
                   type="text"
                   placeholder="URL (without protocol)"
                 />
-                <Select
-                  required
-                  onValueChange={(e) => {
-                    setRating(Number(e));
-                  }}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Rating" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={"1"}>1</SelectItem>
-                    <SelectItem value={"2"}>2</SelectItem>
-                    <SelectItem value={"3"}>3</SelectItem>
-                    <SelectItem value={"4"}>4</SelectItem>
-                    <SelectItem value={"5"}>5</SelectItem>
-                  </SelectContent>
-                </Select>
+
                 <div className="flex gap-2">
                   <Input
                     onChange={(e) => {

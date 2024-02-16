@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
           url: formData.url,
           ratings: {
             create: {
-              rating: formData.rating,
               userEmail: formData.userEmail,
             },
           },
