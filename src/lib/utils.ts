@@ -17,3 +17,10 @@ export async function getSite(url: string) {
     return null;
   }
 }
+
+export function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("");
+}

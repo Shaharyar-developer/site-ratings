@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Navbar } from "@/components/navbar";
 
 import "@/styles/globals.css";
 
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
     "Rate any website on the internet for everyone to see, and see what others have rated.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -27,7 +26,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
           <main>{children}</main>
         </ThemeProvider>
       </body>

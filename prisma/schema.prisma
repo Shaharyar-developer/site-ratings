@@ -10,31 +10,22 @@ datasource db {
 }
 
 model Site {
-  id        Int          @id @default(autoincrement())
-  name      String
-  url       String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime?    @updatedAt
-  ratings   SiteRating[]
+  id      Int          @id @default(autoincrement())
+  name    String
+  url     String
+  ratings SiteRating[]
 }
 
 model User {
-  id        Int          @id @default(autoincrement())
-  email     String       @unique
-  name      String
-  password  String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime?    @updatedAt
-  ratings   SiteRating[]
+  id      Int          @id @default(autoincrement())
+  ratings SiteRating[]
 }
 
 model SiteRating {
-  id        Int       @id @default(autoincrement())
-  rating    Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-  userId    Int
-  siteId    Int
-  User      User      @relation(fields: [userId], references: [id])
-  Site      Site      @relation(fields: [siteId], references: [id])
+  id     Int  @id @default(autoincrement())
+  rating Int  @default(0)
+  userId Int
+  siteId Int
+  User   User @relation(fields: [userId], references: [id])
+  Site   Site @relation(fields: [siteId], references: [id])
 }

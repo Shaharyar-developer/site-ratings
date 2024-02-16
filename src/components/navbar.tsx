@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
+import { signIn } from "next-auth/react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,15 +13,28 @@ import {
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 
-export const Navbar = () => {
+import { UserDialogBox } from "./user-dialog-box";
+
+export const Navbar = ({
+  username,
+  avatar,
+}: {
+  username: Nullable<string>;
+  avatar: Nullable<string>;
+}) => {
   return (
     <nav className="relative w-full">
       <div className="min-h-12 flex justify-between items-center py-2 mx-4 lg:mx-12">
-        <span className="font-bold text-2xl">Website Ratings</span>
+        <span
+          className="font-bold text-2xl cursor-pointer"
+          onClick={() => (window.location.href = "/")}
+        >
+          Website Ratings
+        </span>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Top Ratings</NavigationMenuTrigger>
+              <NavigationMenuTrigger>Top Websites</NavigationMenuTrigger>
               <NavigationMenuContent className="">
                 <>
                   <NavigationMenuLink>Link</NavigationMenuLink>
@@ -28,7 +42,7 @@ export const Navbar = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Developers Projects</NavigationMenuTrigger>
+              <NavigationMenuTrigger>Developers Websites</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <>
                   <NavigationMenuLink>Link</NavigationMenuLink>
@@ -37,7 +51,11 @@ export const Navbar = () => {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <Button>Login | Register</Button>
+        {username ? (
+          <UserDialogBox name={username} avatar={avatar} />
+        ) : (
+          <Button onClick={() => signIn()}>Login | Register</Button>
+        )}
       </div>
       <motion.span
         className="absolute bg-accent w-full h-[1px]"
